@@ -13,6 +13,16 @@ GRUBTamer is a modern, GUI-based editor for managing and customizing the GRUB2 b
 *   **Boot Entries**: View and manage detected operating systems and kernels.
 *   **Backup & Restore**: Automatically backs up configuration files before saving changes.
 
+<img width="381" height="481" alt="Screenshot from 2025-12-27 12-24-36" src="https://github.com/user-attachments/assets/1a380ab4-5442-4d85-93a7-2eac725e2007" />
+
+<img width="381" height="481" alt="Screenshot from 2025-12-27 12-24-57" src="https://github.com/user-attachments/assets/25506c29-cce8-49ff-966b-e16c56a64560" />
+
+<img width="381" height="481" alt="Screenshot from 2025-12-27 12-25-50" src="https://github.com/user-attachments/assets/df88c3e1-8954-491a-9335-e3361dae8694" />
+
+<img width="381" height="481" alt="Screenshot from 2025-12-27 12-25-58" src="https://github.com/user-attachments/assets/b5453d78-0d23-4bbf-be84-9418aa66f411" />
+
+<img width="681" height="514" alt="Screenshot from 2025-12-27 12-26-57" src="https://github.com/user-attachments/assets/686b0e17-2bb9-4002-98f3-27888608377e" />
+
 ## Requirements
 
 *   Python 3
