@@ -2,6 +2,9 @@
 
 GRUBTamer is a modern, GUI-based editor for managing and customizing the GRUB2 bootloader. Built with Python and GTK4/Libadwaita, it provides a user-friendly interface to configure boot settings, manage boot entries, and customize themes without manually editing configuration files.
 
+## Why?
+I wanted to edit my GRUB menu and make some customizations to the loading screen. This one is Linux based.
+
 ## Features
 
 *   **General Settings**: Easily adjust the default boot entry, timeout duration, and menu visibility.
@@ -35,7 +38,7 @@ GRUBTamer is a modern, GUI-based editor for managing and customizing the GRUB2 b
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/GRUBTamer.git
+    git clone https://github.com/DanielRMangru/GRUBTamer.git
     cd GRUBTamer
     ```
 
