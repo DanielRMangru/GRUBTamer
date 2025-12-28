@@ -1,6 +1,6 @@
 # GRUBTamer
 
-GRUBTamer is a modern, GUI-based editor for managing and customizing the GRUB2 bootloader. Built with Python and GTK4/Libadwaita, it provides a user-friendly interface to configure boot settings, manage boot entries, and customize themes without manually editing configuration files.
+GRUBTamer is a modern, GUI-based editor for managing and customizing the GRUB2 bootloader. Built with Python and GTK4/Libadwaita, it provides a user-friendly interface to configure boot settings, m[...] 
 
 ## Why?
 I wanted to edit my GRUB menu and make some customizations to the loading screen. This one is Linux based.
@@ -42,16 +42,43 @@ I wanted to edit my GRUB menu and make some customizations to the loading screen
     cd GRUBTamer
     ```
 
-2.  Install dependencies (example for Debian/Ubuntu):
+2.  Installation options
+
+    Option A — Automated installer (recommended for Linux/Debian-based systems)
     ```bash
-    sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1
+    # Review the installer first, then run it with sudo
+    less install.sh
+    sudo bash install.sh
     ```
-    > **Note:** If a theme file does not exist, the application will ask for elevated privileges to write a default one before the full interface appears.
+    - The installer automates dependency installation (uses `apt` on Debian/Ubuntu), deploys files to `/opt/grubtamer`, creates a `.desktop` file so the app appears in the system menu, and installs the bundled icon.
+    - You will be prompted for your password for elevated operations. Inspect `install.sh` prior to running if you want to verify actions.
+
+    Option B — Uninstall (if you used the automated installer)
+    ```bash
+    # Run the included uninstall script
+    sudo bash uninstall.sh
+    ```
+    - The uninstall script will attempt to remove installed files created by `install.sh` (for example `/opt/grubtamer`, the `.desktop` entry, and installed icons). As with the installer, review `uninstall.sh` before running.
+
+    Option C — Manual (distribution-agnostic)
+    1. Install dependencies manually (example for Debian/Ubuntu):
+       ```bash
+       sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1
+       ```
+    2. Run the application from the project directory:
+       ```bash
+       python3 main.py
+       ```
+    - Note: If you prefer not to use the installer, make sure you have `pkexec` and `grub-mkconfig` available for privileged operations and GRUB updates.
 
 3.  Run the application:
+    - After installation you can launch GRUBTamer from your system menu (if installed via `install.sh`) or run:
     ```bash
     python3 main.py
     ```
+
+> **Note:** If a theme file does not exist, the application will ask for elevated privileges to write a default one before the full interface appears.
+
 ## Change Log
 Changelog - GrubTamer Project
 Date: 2025-12-27
