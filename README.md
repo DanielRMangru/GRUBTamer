@@ -52,6 +52,46 @@ I wanted to edit my GRUB menu and make some customizations to the loading screen
     ```bash
     python3 main.py
     ```
+## Change Log
+Changelog - GrubTamer Project
+Date: 2025-12-27
+
+[v1.1.0] - Packaging & Deployment
+- Added install.sh script for automated dependency installation (apt) and file deployment (/opt/grubtamer).
+- Added .desktop file generation for system menu integration.
+- Added icon.png and integrated it into the installer.
+- Created requirements.txt for Python package tracking.
+- Removed redundant 'GRUB_BACKGROUND' option from main UI (src/system.py).
+
+[v1.0.5] - Boot Entry Management
+- Implemented src/boot_manager.py to parse /boot/grub/grub.cfg.
+- Added UI to "Default Entry" row to select boot targets by name instead of index.
+- Fixed permission issues by reading grub.cfg via `pkexec cat`.
+
+[v1.0.4] - Theme Editor Transaction Safety
+- Refactored on_save_clicked in ThemeEditorWindow to bundle all operations (Asset Move + File Write) into a single `pkexec` transaction.
+- Eliminated multiple password prompts during save.
+- Fixed accumulating whitespace issue in theme.txt parser.
+
+[v1.0.3] - Dynamic Asset Generation
+- Implemented GdkPixbuf logic to generate 1x1 PNGs for Menu Box backgrounds (enabling transparency support).
+- Implemented Cairo logic to generate dynamic assets (ring/dot) for Circular Progress indicators.
+- Updated src/theme_parser.py to link `menu_pixmap_style` and `circular_progress` blocks to generated assets.
+
+[v1.0.2] - Parser & Styling Fixes
+- Fixed critical bug where internal GUI keys (e.g., progress-style) were corrupting theme.txt syntax.
+- Implemented 'virtual' property flags in parser to separate UI state from GRUB config.
+- Fixed missing colors in Boot Menu by explicitly mapping `item_color` and `selected_item_color`.
+- Split "Styled Box" UI group into "Boot Menu Styling" and "Footer Text" for clarity.
+
+[v1.0.1] - Permissions & GTK Fixes
+- Replaced deprecated `set_margin_all` with individual margin setters for GTK4 compliance.
+- Fixed `AttributeError` in secondary windows by implementing `Gio.SimpleActionGroup`.
+- Implemented automatic asset import logic: dragging/selecting files now copies them to the theme directory via `pkexec` to ensure GRUB visibility.
+
+[v1.0.0] - Initial Commit
+- Basic functionality for editing /etc/default/grub.
+- Initial Theme Editor UI.
 
 ## Attributions
 *   **Developer:** Daniel R Mangru (concept, direction, debugger)
