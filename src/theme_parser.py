@@ -2,66 +2,61 @@ import os
 import re
 
 # Expanded Global Properties
+# "virtual": True means "Don't write this as key="val" at the top of the file"
 THEME_GLOBALS = {
     # --- GROUP: General ---
-    "title-text": {"label": "Title Text", "type": "text", "group": "General",
-                   "desc": "Text displayed at the top of the screen."},
+    "title-text": {"label": "Title Text", "type": "text", "group": "General", "desc": "Text displayed at the top of the screen."},
     "title-font": {"label": "Title Font", "type": "font", "group": "General", "desc": "Font used for the title."},
     "title-color": {"label": "Title Color", "type": "color", "group": "General", "desc": "Color of the title text."},
-
+    
     # --- GROUP: Appearance ---
-    "desktop-image": {"label": "Desktop Image", "type": "file", "group": "Appearance",
-                      "desc": "Background image for the menu."},
-    "desktop-color": {"label": "Desktop Color", "type": "color", "group": "Appearance",
-                      "desc": "Background color if no image is used."},
-
+    "desktop-image": {"label": "Desktop Image", "type": "file", "group": "Appearance", "desc": "Background image for the menu."},
+    "desktop-color": {"label": "Desktop Color", "type": "color", "group": "Appearance", "desc": "Background color if no image is used."},
+    
     # --- GROUP: Menu Layout ---
     "menu-position": {
-        "label": "Menu Position",
-        "type": "dropdown",
-        "group": "Menu Layout",
+        "label": "Menu Position", 
+        "type": "dropdown", 
+        "group": "Menu Layout", 
         "options": ["Northwest", "North", "Northeast", "West", "Center", "East", "Southwest", "South", "Southeast"],
         "desc": "Position of the boot menu on the screen.",
-        "virtual": True
+        "virtual": True 
     },
-    "terminal-font": {"label": "Terminal Font", "type": "font", "group": "Menu Layout",
-                      "desc": "Font used in the terminal box."},
+    "terminal-font": {"label": "Terminal Font", "type": "font", "group": "Menu Layout", "desc": "Font used in the terminal box."},
 
     # --- GROUP: Boot Menu Styling ---
     "box-border-color": {
-        "label": "Box Border / Normal Text",
-        "type": "color",
-        "group": "Boot Menu Styling",
-        "desc": "Color of the border (and non-highlighted text).",
-        "virtual": False
+        "label": "Box Border / Normal Text", 
+        "type": "color", 
+        "group": "Boot Menu Styling", 
+        "desc": "Color of the border (and non-highlighted text).", 
+        "virtual": True # FIX: Must be TRUE so GRUB doesn't crash
     },
     "box-bg-color": {
-        "label": "Box Background",
-        "type": "color",
-        "group": "Boot Menu Styling",
-        "desc": "Background color of the menu box (Supports Transparency).",
-        "virtual": False
+        "label": "Box Background", 
+        "type": "color", 
+        "group": "Boot Menu Styling", 
+        "desc": "Background color of the menu box (Supports Transparency).", 
+        "virtual": True # FIX: Must be TRUE so GRUB doesn't crash
     },
     "selected-item-color": {
-        "label": "Selected Item Text",
-        "type": "color",
-        "group": "Boot Menu Styling",
-        "desc": "Text color of the highlighted entry.",
-        "virtual": True
+        "label": "Selected Item Text", 
+        "type": "color", 
+        "group": "Boot Menu Styling", 
+        "desc": "Text color of the highlighted entry.", 
+        "virtual": True 
     },
-
+    
     # --- GROUP: Footer Text ---
-    "message-font": {"label": "Message Font", "type": "font", "group": "Footer Text",
-                     "desc": "Font used for footer messages."},
-    "message-color": {"label": "Message Color", "type": "color", "group": "Footer Text",
-                      "desc": "Color of the message text."},
+    "message-font": {"label": "Message Font", "type": "font", "group": "Footer Text", "desc": "Font used for footer messages."},
+    "message-color": {"label": "Message Color", "type": "color", "group": "Footer Text", "desc": "Color of the message text."},
 
     # --- GROUP: Progress Bar ---
     "progress-style": {
-        "label": "Progress Style",
-        "type": "dropdown",
-        "group": "Progress Bar",
-        "options": ["bar", "circle"],  # Re-enabled circle
+        "label": "Progress Style", 
+        "type": "dropdown", 
+        "group": "Progress Bar", 
+        "options": ["bar", "circle"],
         "desc": "Style of the timeout indicator.",
         "virtual": True
     },
@@ -70,18 +65,16 @@ THEME_GLOBALS = {
         "virtual": True
     },
     "progress-bg-color": {
-        "label": "Progress Background", "type": "color", "group": "Progress Bar",
-        "desc": "Color of the empty portion (track).",
+        "label": "Progress Background", "type": "color", "group": "Progress Bar", "desc": "Color of the empty portion (track).",
         "virtual": True
     },
 }
 
 POSITION_MAP = {
-    "Northwest": ("5%", "5%"), "North": ("25%", "5%"), "Northeast": ("45%", "5%"),
-    "West": ("5%", "30%"), "Center": ("25%", "30%"), "East": ("45%", "30%"),
-    "Southwest": ("5%", "55%"), "South": ("25%", "55%"), "Southeast": ("45%", "55%"),
+    "Northwest": ("5%", "5%"),  "North": ("25%", "5%"),   "Northeast": ("45%", "5%"),
+    "West":      ("5%", "30%"), "Center": ("25%", "30%"), "East":      ("45%", "30%"),
+    "Southwest": ("5%", "55%"), "South": ("25%", "55%"),  "Southeast": ("45%", "55%"),
 }
-
 
 def parse_theme(theme_path):
     """Parses a GRUB theme.txt file."""
@@ -94,7 +87,16 @@ def parse_theme(theme_path):
 
         for line in content.splitlines():
             line = line.strip()
-            if not line or line.startswith('#'): continue
+            if not line: continue
+            
+            # FIX: Check for our hidden comments to restore state
+            if line.startswith('# box-bg-color:'):
+                 match = re.match(r'^#\s*box-bg-color\s*:\s*"?([^"]*)"?', line)
+                 if match: properties["box-bg-color"] = match.group(1)
+                 continue
+
+            if line.startswith('#'): continue
+
             match = re.match(r'^([\w\-]+)\s*:\s*"?([^"]*)"?', line)
             if match:
                 key = match.group(1)
@@ -102,16 +104,11 @@ def parse_theme(theme_path):
                 if key in THEME_GLOBALS:
                     properties[key] = val
 
-        # Parse Blocks (Progress / Menu)
-
-        # Check for CIRCULAR first
+        # Parse Blocks
         cp_match = re.search(r'\+\s*circular_progress\s*\{(.*?)\}', content, re.DOTALL)
         if cp_match:
             properties["progress-style"] = "circle"
-            # We don't easily parse colors from images, so we might default or try to read globals if we saved them elsewhere
-            # For simplicity, we assume the user sets them in the UI.
 
-        # Check for BAR second (overwrite if found, though usually mutually exclusive)
         pb_match = re.search(r'\+\s*progress_bar\s*\{(.*?)\}', content, re.DOTALL)
         if pb_match:
             block = pb_match.group(1)
@@ -131,34 +128,26 @@ def parse_theme(theme_path):
                         properties["menu-position"] = name
                         break
             if m := re.search(r'item_color\s*=\s*"?([^"\n]*)"?', block):
-                properties["box-border-color"] = m.group(1)
+                properties["box-border-color"] = m.group(1) 
             if m := re.search(r'selected_item_color\s*=\s*"?([^"\n]*)"?', block):
-                properties["selected-item-color"] = m.group(1)
+                properties["selected-item-color"] = m.group(1) 
 
-    except Exception as e:
-        print(f"Error parsing theme: {e}")
+    except Exception as e: print(f"Error parsing theme: {e}")
     return properties
-
 
 def save_theme(theme_path, data_dict):
     if not os.path.exists(theme_path): return None
 
     try:
-        with open(theme_path, 'r') as f:
-            content = f.read()
+        with open(theme_path, 'r') as f: content = f.read()
 
         # 1. Prepare Block Content
-
-        # PROGRESS LOGIC
         style = data_dict.get("progress-style", "bar")
         p_color = data_dict.get("progress-color", "#ffffff")
         p_bg = data_dict.get("progress-bg-color", "#333333")
-
+        
         new_progress_block = ""
-
         if style == "circle":
-            # Circular Progress Block
-            # Relies on generated assets: c_center.png (bg) and c_tick.png (fg)
             new_progress_block = f"""
 + circular_progress {{
     id = "__timeout__"
@@ -174,7 +163,6 @@ def save_theme(theme_path, data_dict):
 }}
 """
         else:
-            # Standard Bar Block
             new_progress_block = f"""
 + progress_bar {{
     id = "__timeout__"
@@ -193,8 +181,8 @@ def save_theme(theme_path, data_dict):
 
         left_val, top_val = "25%", "30%"
         if "menu-position" in data_dict and data_dict["menu-position"] in POSITION_MAP:
-            left_val, top_val = POSITION_MAP[data_dict["menu-position"]]
-
+             left_val, top_val = POSITION_MAP[data_dict["menu-position"]]
+        
         normal_color = data_dict.get("box-border-color", "#ffffff")
         sel_color = data_dict.get("selected-item-color", "#000000")
 
@@ -221,18 +209,22 @@ def save_theme(theme_path, data_dict):
 
         for line in lines:
             stripped = line.strip()
+            # Remove existing meta-comments to avoid duplicates
+            if stripped.startswith('# box-bg-color:'): continue
+
             match = re.match(r'^([\w\-]+)\s*:\s*"?([^"]*)"?', stripped)
             if match and not stripped.startswith('#') and '{' not in stripped:
                 key = match.group(1)
                 if key in data_dict and key in THEME_GLOBALS and not THEME_GLOBALS[key].get("virtual"):
                     new_lines.append(f'{key}: "{data_dict[key]}"')
                     processed_keys.add(key)
-                elif key in THEME_GLOBALS and THEME_GLOBALS[key].get("virtual"):
-                    pass
-                else:
-                    new_lines.append(line)
-            else:
-                new_lines.append(line)
+                elif key in THEME_GLOBALS and THEME_GLOBALS[key].get("virtual"): pass 
+                else: new_lines.append(line)
+            else: new_lines.append(line)
+
+        # Write Persistence Comments
+        if "box-bg-color" in data_dict:
+             new_lines.append(f'# box-bg-color: "{data_dict["box-bg-color"]}"')
 
         for key, val in data_dict.items():
             if key in THEME_GLOBALS and not THEME_GLOBALS[key].get("virtual"):
@@ -241,14 +233,11 @@ def save_theme(theme_path, data_dict):
         final_content = "\n".join(new_lines) + "\n"
 
         # 3. Replace Blocks
-        # Remove BOTH types of progress blocks to be safe
         final_content = re.sub(r'\+\s*progress_bar\s*\{(.*?)\}', '', final_content, flags=re.DOTALL)
         final_content = re.sub(r'\+\s*circular_progress\s*\{(.*?)\}', '', final_content, flags=re.DOTALL)
-
         final_content = re.sub(r'\+\s*boot_menu\s*\{(.*?)\}', '', final_content, flags=re.DOTALL)
-
+        
         final_content = final_content.strip() + "\n\n"
-
         final_content += new_boot_menu
         final_content += new_progress_block
 
